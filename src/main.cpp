@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 int getRow(int numberOfRow);
+sf::Image removeColor(sf::Image image, int width, int height, int r, int g, int b);
 
 int main(int argc, char** argv) {
     sf::RenderWindow window(sf::VideoMode(640, 480), "SFML Demo");
@@ -11,6 +12,7 @@ int main(int argc, char** argv) {
     sf::Clock clock;
     sf::Texture texture;
     sf::Sprite sprite;
+    sf::Image image;
     float x = 0.0f;
     float y = 0.0f;
 
@@ -18,9 +20,13 @@ int main(int argc, char** argv) {
     int row = getRow(0);
     sf::IntRect rectSourceSprite(row, 3, 30, 30);
 
-    /*THE AUTHOR OF THEM IS Jetrel TAKEN FROM URL https://opengameart.org/content/castle-platformer*/
-    if (texture.loadFromFile("assets/bat.png"))
+    /*The author of the image(" bat.png ")    is "Jetrel"    taken from URL(" https://opengameart.org/content/castle-platformer ") */
+    /*The author of the image(" arcade.png ") is "OptimusDu" taken FROM URL(" https://opengameart.org/content/pixel-arcade-buttons ") */
+    if (image.loadFromFile("assets/bat.png"))
     {
+        texture.loadFromImage(removeColor(image, 171, 103, 111, 109, 81));
+        
+
         sprite.setTexture(texture);
         sprite.setTextureRect(rectSourceSprite);
         sprite.setScale(2, 2);
@@ -72,7 +78,6 @@ int main(int argc, char** argv) {
             clock.restart();
         }
 
-
         sprite.setPosition(x, y);
         window.clear();
         window.draw(sprite);
@@ -85,6 +90,24 @@ int getRow(int numberOfRow) {
     const int size = 34;
     int offset = 3;
     return (size * (int)numberOfRow) + offset;
+}
+
+sf::Image removeColor(sf::Image image,int width, int height, int r, int g, int b) {
+
+    for (int y = 0; y < height; y++) {
+        //removing pixels
+        for (int x = 0; x < width; x++) {
+            int pr = image.getPixel(x, y).r == r;
+            int pg = image.getPixel(x, y).g == g;
+            int pb = image.getPixel(x, y).b == b;
+
+            if (pr  && pg  && pb ) {    
+                 image.setPixel(x, y, sf::Color(0,0,0,0));
+            }
+        }
+    }
+
+    return image;
 }
 
 
