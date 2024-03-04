@@ -86,12 +86,15 @@ int main(int argc, char** argv) {
     buttons[3].sprite.setScale(2, 2);
 
     //setting bat to start at cener of the screen
-    bat.x = WIDTH / 2;
-    bat.y = HEIGHT / 2;
-    buttons[0].sprite.setPosition((WIDTH / 2), (HEIGHT / 2) - 30);
-    buttons[1].sprite.setPosition((WIDTH / 2), (HEIGHT / 2) + 64 - 30);
-    buttons[2].sprite.setPosition((WIDTH / 2) + 64, (HEIGHT / 2));
-    buttons[3].sprite.setPosition((WIDTH / 2) - 64, (HEIGHT / 2));
+    auto middleWidth = WIDTH / 4;
+    auto middleHeight = WIDTH / 4;
+
+    bat.x = middleWidth;
+    bat.y = middleHeight - 128;
+    buttons[0].sprite.setPosition(middleWidth, middleHeight - 30);
+    buttons[1].sprite.setPosition(middleWidth, middleHeight + 64 - 30);
+    buttons[2].sprite.setPosition(middleWidth + 64, middleHeight);
+    buttons[3].sprite.setPosition(middleWidth - 64, middleHeight);
 
     //timing
     sf::Clock delta;
