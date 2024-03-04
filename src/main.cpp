@@ -3,6 +3,9 @@
 #include <random>
 #include <unordered_map>
 
+int getRow(int numberOfRow);
+sf::Image removeColor(sf::Image image, int width, int height, int r, int g, int b);
+
 const int WIDTH  = 640;
 const int HEIGHT = 480;
 
@@ -16,10 +19,36 @@ struct Entity
     float x = 0.0f;
     float y = 0.0f;
     float speed = 0.0f;
-};
 
-int getRow(int numberOfRow);
-sf::Image removeColor(sf::Image image, int width, int height, int r, int g, int b);
+    float scaleX = 2;
+    float scaleY = 2;
+
+    void load(std::string path)
+    {
+        if (!image.loadFromFile(ASSETS_PATH + path))
+            std::cout << "Could not load image: " << (ASSETS_PATH + path) << std::endl;
+
+        texture.loadFromImage(image);
+        sprite.setTexture(texture);
+        sprite.setScale(scaleX, scaleY);
+    }
+
+    void draw(sf::RenderWindow& window)
+    {
+        window.draw(sprite);
+    }
+
+    void setFrame(int left, int top, int width, int height)
+    {
+        frame = sf::IntRect(left, top, width, height);
+        sprite.setTextureRect(frame);
+    }
+
+    void removeBackground(int width, int heigth, int r, int g, int b)
+    {
+        texture.loadFromImage(removeColor(image, width, heigth, r, g, b));
+    }
+};
 
 int main(int argc, char** argv) {
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "SFML Demo");
@@ -30,60 +59,33 @@ int main(int argc, char** argv) {
     Entity bat;
     bat.speed = 300.0f;
     
-    //
-    Entity buttons[4];//w - s - d - a
+    //w - s - d - a
+    Entity buttons[4];
 
     /*The author of the image(" bat.png ")    is "Jetrel"    taken from URL(" https://opengameart.org/content/castle-platformer ") */
     /*The author of the image keys            is "Gerald"    taken from URL(" https://gerald-burke.itch.io/geralds-keys ") */
-    if (!bat.image.loadFromFile(ASSETS_PATH"bat.png"))
-        std::cout << "Could not load image" << std::endl;
-
-    if (!buttons[0].image.loadFromFile(ASSETS_PATH"Gerald_Keys/Keys/W-Key.png"))
-        std::cout << "Could not load image" << std::endl;
-
-    if (!buttons[1].image.loadFromFile(ASSETS_PATH"Gerald_Keys/Keys/S-Key.png"))
-        std::cout << "Could not load image" << std::endl;
-
-    if (!buttons[2].image.loadFromFile(ASSETS_PATH"Gerald_Keys/Keys/D-Key.png"))
-        std::cout << "Could not load image" << std::endl;
-
-    if (!buttons[3].image.loadFromFile(ASSETS_PATH"Gerald_Keys/Keys/A-Key.png"))
-        std::cout << "Could not load image" << std::endl;
 
     //bat
-    bat.frame = sf::IntRect(getRow(0), 3, 30, 30);
-    bat.texture.loadFromImage(removeColor(bat.image, 171, 103, 111, 109, 81));
-    bat.sprite.setTexture(bat.texture);
-    bat.sprite.setTextureRect(bat.frame);
-    bat.sprite.setScale(2, 2);
+    bat.load("bat.png");
+    bat.removeBackground(171, 103, 111, 109, 81);
+    bat.setFrame(getRow(0), 3, 30, 30);
 
     //button_w
-    buttons[0].frame = sf::IntRect(0, 0, 32, 32);
-    buttons[0].texture.loadFromImage(buttons[0].image);
-    buttons[0].sprite.setTexture(buttons[0].texture);
-    buttons[0].sprite.setTextureRect(buttons[0].frame);
-    buttons[0].sprite.setScale(2, 2);
+    buttons[0].load("Gerald_Keys/Keys/W-Key.png");
+    buttons[0].setFrame(0, 0, 32, 32);
 
+    
     //button_s
-    buttons[1].frame = sf::IntRect(0, 0, 32, 32);
-    buttons[1].texture.loadFromImage(buttons[1].image);
-    buttons[1].sprite.setTexture(buttons[1].texture);
-    buttons[1].sprite.setTextureRect(buttons[1].frame);
-    buttons[1].sprite.setScale(2, 2);
+    buttons[1].load("Gerald_Keys/Keys/S-Key.png");
+    buttons[1].setFrame(0, 0, 32, 32);
 
     //button_d
-    buttons[2].frame = sf::IntRect(0, 0, 32, 32);
-    buttons[2].texture.loadFromImage(buttons[2].image);
-    buttons[2].sprite.setTexture(buttons[2].texture);
-    buttons[2].sprite.setTextureRect(buttons[2].frame);
-    buttons[2].sprite.setScale(2, 2);
+    buttons[2].load("Gerald_Keys/Keys/D-Key.png");
+    buttons[2].setFrame(0, 0, 32, 32);
 
     //button_a
-    buttons[3].frame = sf::IntRect(0, 0, 32, 32);
-    buttons[3].texture.loadFromImage(buttons[3].image);
-    buttons[3].sprite.setTexture(buttons[3].texture);
-    buttons[3].sprite.setTextureRect(buttons[3].frame);
-    buttons[3].sprite.setScale(2, 2);
+    buttons[3].load("Gerald_Keys/Keys/A-Key.png");
+    buttons[3].setFrame(0, 0, 32, 32);
 
     //setting bat to start at cener of the screen
     auto middleWidth = WIDTH / 4;
@@ -148,12 +150,15 @@ int main(int argc, char** argv) {
 
         //
         window.clear(sf::Color::White);
-        window.draw(buttons[0].sprite);
-        window.draw(buttons[1].sprite);
-        window.draw(buttons[2].sprite);
-        window.draw(buttons[3].sprite);
 
-        window.draw(bat.sprite);
+        //
+        buttons[0].draw(window);
+        buttons[1].draw(window);
+        buttons[2].draw(window);
+        buttons[3].draw(window);
+        bat.draw(window);
+
+        //
         window.display();
         dt = delta.restart().asSeconds();
     }
@@ -183,6 +188,15 @@ sf::Image removeColor(sf::Image image,int width, int height, int r, int g, int b
 
     return image;
 }
+
+/*
+struct Animation
+{
+    sf::IntRect rect; //spritesheet rect
+    int frames;       //number of frames
+};
+//    std::unordered_map<std::string, sf::IntRect> animations;
+*/
 
 
 /*    
